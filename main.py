@@ -46,7 +46,8 @@ async def create_trade(trades: schemas.Trade, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Trade already exists")
     new_trade = models.Trade(trade_id=trades.trade_id, trader=trades.trader, asset_class=trades.asset_class,
                              counterparty=trades.counterparty, trade_date_time=trades.trade_date_time,
-                             instrument_id=trades.instrument_id, instrument_name=trades.instrument_name)
+                             instrument_id=trades.instrument_id, instrument_name=trades.instrument_name
+                             )
     db.add(new_trade)
     db.commit()
     db.refresh(new_trade)
@@ -69,7 +70,7 @@ async def get_trade_by_id(trade_id: str, db: Session = Depends(get_db)):
 async def get_trade_by_counterparty(counterparty: str, db: Session = Depends(get_db)):
     return db.query(models.Trade).filter(models.Trade.counterparty == counterparty).all()
 
-@app.get("/trade/{trader}/details")
+@app.get("/trade/{trader}")
 async def get_trade_by_trader(trader: str, db: Session = Depends(get_db)):
     return db.query(models.Trade).filter(models.Trade.trader == trader).all()
 
@@ -82,5 +83,31 @@ async def get_trade_by_instrument_id(instrument_id: str, db: Session = Depends(g
 async def get_trade_by_instrument_name(instrument_name: str, db: Session = Depends(get_db)):
     return db.query(models.Trade).filter(models.Trade.instrument_name == instrument_name).all()
 
-@app.
 
+
+
+
+
+
+
+
+
+
+
+
+#ignoring the below code for now
+# @app.post("/trade/{trade_id}/trade_details", response_model=schemas.TradeDetails)
+# def create_trade_details(
+#     trade_id: str,
+#     trade_details: schemas.TradeDetails,
+#     db: Session = Depends(get_db)
+# ):
+#     db_trade = db.query(models.Trade).filter(models.Trade.trade_id == trade_id).first()
+#     if not db_trade:
+#         raise HTTPException(status_code=404, detail="Trade not found")
+#     new_trade_details = models.TradeDetails(id=trade_id, buySellIndicator=trade_details.buySellIndicator,
+#                                             price=trade_details.price, quantity=trade_details.quantity)
+#     db.add(new_trade_details)
+#     db.commit()
+#     db.refresh(new_trade_details)
+#     return new_trade_details

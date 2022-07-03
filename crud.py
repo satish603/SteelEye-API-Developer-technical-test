@@ -30,7 +30,7 @@ def get_trade(db: Session, skip: int = 0, limit: int = 100):
 def create_trade_details(db: Session, trade_details: schemas.TradeDetails,trade_id: str):
     
     db_trade_details = models.TradeDetails(
-        owner_id=trade_id,
+        id=trade_details.id,
         buySellIndicator=trade_details.buySellIndicator,
         price=trade_details.price,
         quantity=trade_details.quantity,
