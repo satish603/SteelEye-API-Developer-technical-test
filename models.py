@@ -17,8 +17,6 @@ class TradeDetails(Base):
 class Trade(Base):
     __tablename__ = "trade"
 
-    trade_id = Column(String, primary_key=True, index=True)
-    trader = Column(String)
     asset_class = Column(String)
     counterparty = Column(String)
     instrument_id = Column(Integer)
@@ -26,3 +24,5 @@ class Trade(Base):
     trade_date_time = Column(DateTime)
     trade_details_id = Column(Integer, ForeignKey("trade_details.id"))
     trade_details = relationship("TradeDetails", back_populates='trades')
+    trade_id = Column(String, primary_key=True, index=True)
+    trader = Column(String)

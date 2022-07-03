@@ -12,6 +12,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
     response = Response("Internal server error", status_code=500)
@@ -40,11 +41,34 @@ async def get_trades(db: Session = Depends(get_db), limit: Optional[int] = None)
 
 @app.post("/trade")
 async def create_trade(trades: schemas.Trade, db: Session = Depends(get_db)):
+    db_trade=db.query(models.Trade).filter(models.Trade.trade_id == trades.trade_id).first()
+    if db_trade:
+        raise HTTPException(status_code=400, detail="Trade already exists")
     new_trade = models.Trade(trade_id=trades.trade_id, trader=trades.trader, asset_class=trades.asset_class,
                              counterparty=trades.counterparty, trade_date_time=trades.trade_date_time,
                              instrument_id=trades.instrument_id, instrument_name=trades.instrument_name)
     db.add(new_trade)
     db.commit()
     db.refresh(new_trade)
-
     return new_trade
+
+@app.post("/trade_details/{trade_id}")
+def create_trade_details(trade_details: schemas.TradeDetails, trade_id: str, db: Session = Depends(get_db)):
+    db_trade_details = db.query(models.TradeDetails).filter(models.TradeDetails.owner_id == trade_id).first()
+    if db_trade_details:
+        raise HTTPException(status_code=400, detail="Trade already exists")
+    new_trade_details = models.TradeDetails(trade_id=trade_id, buySellIndicator=trade_details.buySellIndicator,
+                                            price=trade_details.price, quantity=trade_details.quantity)
+    db.add(new_trade_details)
+    db.commit()
+    db.refresh(new_trade_details)
+    return new_trade_details
+
+@app.get("/trade/{trade_id}")
+async def get_trade_by_id(trade_id: str, db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.trade_id == trade_id).first()
+    
+@app.get("/trade/{counterparty}/details")
+async def get_trade_by_counterparty(counterparty: str, db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.counterparty == counterparty).all()
+
