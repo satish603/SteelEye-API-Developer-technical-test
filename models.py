@@ -7,7 +7,7 @@ from database import Base
 class TradeDetails(Base):
     __tablename__ = "trade_details"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True)
     buySellIndicator = Column(String)
     price = Column(Float)
     quantity = Column(Integer)
@@ -22,7 +22,7 @@ class Trade(Base):
     instrument_id = Column(Integer)
     instrument_name = Column(String)
     trade_date_time = Column(DateTime)
-    trade_details_id = Column(Integer, ForeignKey("trade_details.id"))
+    trade_details_id = Column(String, ForeignKey("trade_details.id"))
     trade_details = relationship("TradeDetails", back_populates='trades')
     trade_id = Column(String, primary_key=True, index=True)
     trader = Column(String)

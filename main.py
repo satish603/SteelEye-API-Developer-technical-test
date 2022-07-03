@@ -52,12 +52,9 @@ async def create_trade(trades: schemas.Trade, db: Session = Depends(get_db)):
     db.refresh(new_trade)
     return new_trade
 
-@app.post("/trade_details/{trade_id}")
-def create_trade_details(trade_details: schemas.TradeDetails, trade_id: str, db: Session = Depends(get_db)):
-    db_trade_details = db.query(models.TradeDetails).filter(models.TradeDetails.owner_id == trade_id).first()
-    if db_trade_details:
-        raise HTTPException(status_code=400, detail="Trade already exists")
-    new_trade_details = models.TradeDetails(trade_id=trade_id, buySellIndicator=trade_details.buySellIndicator,
+@app.post("/trade_details/{id}")
+async def create_trade_details(trade_details: schemas.TradeDetails, id: str, db: Session = Depends(get_db)):
+    new_trade_details = models.TradeDetails(id=id, buySellIndicator=trade_details.buySellIndicator,
                                             price=trade_details.price, quantity=trade_details.quantity)
     db.add(new_trade_details)
     db.commit()
@@ -71,4 +68,19 @@ async def get_trade_by_id(trade_id: str, db: Session = Depends(get_db)):
 @app.get("/trade/{counterparty}/details")
 async def get_trade_by_counterparty(counterparty: str, db: Session = Depends(get_db)):
     return db.query(models.Trade).filter(models.Trade.counterparty == counterparty).all()
+
+@app.get("/trade/{trader}/details")
+async def get_trade_by_trader(trader: str, db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.trader == trader).all()
+
+
+@app.get("/trade/{instrument_id}/details")
+async def get_trade_by_instrument_id(instrument_id: str, db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.instrument_id == instrument_id).all()
+
+@app.get("/trade/{instrument_name}/details")
+async def get_trade_by_instrument_name(instrument_name: str, db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.instrument_name == instrument_name).all()
+
+@app.
 
