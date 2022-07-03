@@ -1,6 +1,6 @@
 import datetime as dt
 
-from typing import Optional
+from typing import Optional , List
 from pydantic import BaseModel, Field
 
 class TradeDetails(BaseModel):
@@ -9,10 +9,7 @@ class TradeDetails(BaseModel):
     price: float = Field(description="The price of the Trade.")
 
     quantity: int = Field(description="The amount of units traded.")
-    
-    class Config:
-        orm_mode = True
-    
+
 
 class Trade(BaseModel):
     asset_class: Optional[str] = Field(alias="assetClass", default=None, description="The asset class of the instrument traded. E.g. Bond, Equity, FX...etc")
@@ -25,13 +22,8 @@ class Trade(BaseModel):
 
     trade_date_time: dt.datetime = Field(alias="tradeDateTime", description="The date-time the Trade was executed")
 
-    trade_details: TradeDetails = Field(alias="tradeDetails", description="The details of the trade, i.e. price, quantity")
+    trade_details: List[TradeDetails] = Field(alias="tradeDetails", description="The details of the trade, i.e. price, quantity")
 
     trade_id: str = Field(alias="tradeId", default=None, description="The unique ID of the trade")
 
     trader: str = Field(description="The name of the Trader")
-
-    class Config:
-        orm_mode = True
-
-

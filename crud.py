@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from import models, schemas
 
 
 def get_trade_by_id(db: Session, trade_id: str):
@@ -27,8 +27,10 @@ def create_trade(db: Session, trade: schemas.Trade):
 def get_trade(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Trade).offset(skip).limit(limit).all()
 
-def create_trade_details(db: Session, trade_details: schemas.TradeDetails):
+def create_trade_details(db: Session, trade_details: schemas.TradeDetails,trade_id: str):
+    
     db_trade_details = models.TradeDetails(
+        owner_id=trade_id,
         buySellIndicator=trade_details.buySellIndicator,
         price=trade_details.price,
         quantity=trade_details.quantity,
