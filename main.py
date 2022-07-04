@@ -101,4 +101,4 @@ def create_trade_details(
 
 @app.get("/trade/{assetClass}/{endend}/{maxPrice}/{minPrice}/{start}/{tradetype}")
 def advance_filtering(assetClass: Optional[str], endend: Optional[str], maxPrice: Optional[float], minPrice: Optional[float], start: Optional[str], tradetype: Optional[str], db: Session = Depends(get_db)):
-    return db.query(models.Trade).filter(models.Trade.asset_class == assetClass).filter(models.Trade.trade_date_time >= start).filter(models.Trade.trade_date_time <= endend).filter(models.Trade.price <= maxPrice).filter(models.Trade.price >= minPrice).filter(models.Trade.trader == tradetype).all()
+    return db.query(models.Trade).filter(models.Trade.asset_class == assetClass).filter(models.Trade.trade_date_time >= start).filter(models.Trade.trade_date_time <= endend).filter(models.TradeDetails.price <= maxPrice).filter(models.TradeDetails.price >= minPrice).filter(models.Trade.trader == tradetype).all()
