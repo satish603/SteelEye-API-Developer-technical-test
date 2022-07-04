@@ -3,9 +3,8 @@ from typing import Optional, List
 from fastapi import Depends, FastAPI, HTTPException,Request,Response
 from sqlalchemy.orm import Session
 import schemas, models # noqa: E402
-
 from database import SessionLocal,engine
-
+import datetime as dt
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -99,6 +98,6 @@ def create_trade_details(
     db.refresh(new_trade_details)
     return new_trade_details
 
-@app.get("/trade/{assetClass}/{endend}/{maxPrice}/{minPrice}/{start}/{tradetype}")
-def advance_filtering(assetClass: Optional[str], endend: Optional[str], maxPrice: Optional[float], minPrice: Optional[float], start: Optional[str], tradetype: Optional[str], db: Session = Depends(get_db)):
-    return db.query(models.Trade).filter(models.Trade.asset_class == assetClass).filter(models.Trade.trade_date_time >= start).filter(models.Trade.trade_date_time <= endend).filter(models.TradeDetails.price <= maxPrice).filter(models.TradeDetails.price >= minPrice).filter(models.Trade.trader == tradetype).all()
+@app.get("/trade/{assetClass}/{end}/{maxPrice}/{minPrice}/{start}/{tradetype}")
+def advance_filtering(assetClass: Optional[str], end: Optional[dt.datetime], maxPrice: Optional[float], minPrice: Optional[float], start: Optional[str], tradetype: Optional[str], db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.asset_class == assetClass).filter(models.Trade.trade_date_time >= start).filter(models.Trade.trade_date_time <= end).filter(models.TradeDetails.price <= maxPrice).filter(models.TradeDetails.price >= minPrice).filter(models.Trade.trader == tradetype).all()
