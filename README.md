@@ -270,4 +270,10 @@ async def get_trade_by_instrument_name(instrument_name: str, db: Session = Depen
 + Trader
     + ![image](https://user-images.githubusercontent.com/60779510/177054965-d42bfce5-01b7-4497-9c1e-fab2d2249757.png)
 
+### Advanced filtering
+The users would able to ability to filter trades with endpoint for fetching a list of trades will need to support filtering using the following optional query parameters:
+
+- ![image](https://user-images.githubusercontent.com/60779510/177075000-e95796e3-a7d7-415d-b123-6bd63b14ffe8.png)
+- ![image](https://user-images.githubusercontent.com/60779510/177075021-d790be09-76f5-42f4-b36d-13a1dabe2577.png)
+
 
