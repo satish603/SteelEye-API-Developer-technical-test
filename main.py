@@ -83,31 +83,22 @@ async def get_trade_by_instrument_id(instrument_id: str, db: Session = Depends(g
 async def get_trade_by_instrument_name(instrument_name: str, db: Session = Depends(get_db)):
     return db.query(models.Trade).filter(models.Trade.instrument_name == instrument_name).all()
 
+@app.post("/trade/{trade_id}/trade_details", response_model=schemas.TradeDetails)
+def create_trade_details(
+    trade_id: str,
+    trade_details: schemas.TradeDetails,
+    db: Session = Depends(get_db)
+):
+    db_trade = db.query(models.Trade).filter(models.Trade.trade_id == trade_id).first()
+    if not db_trade:
+        raise HTTPException(status_code=404, detail="Trade not found")
+    new_trade_details = models.TradeDetails(id=trade_id, buySellIndicator=trade_details.buySellIndicator,
+                                            price=trade_details.price, quantity=trade_details.quantity)
+    db.add(new_trade_details)
+    db.commit()
+    db.refresh(new_trade_details)
+    return new_trade_details
 
-
-
-
-
-
-
-
-
-
-
-
-#ignoring the below code for now
-# @app.post("/trade/{trade_id}/trade_details", response_model=schemas.TradeDetails)
-# def create_trade_details(
-#     trade_id: str,
-#     trade_details: schemas.TradeDetails,
-#     db: Session = Depends(get_db)
-# ):
-#     db_trade = db.query(models.Trade).filter(models.Trade.trade_id == trade_id).first()
-#     if not db_trade:
-#         raise HTTPException(status_code=404, detail="Trade not found")
-#     new_trade_details = models.TradeDetails(id=trade_id, buySellIndicator=trade_details.buySellIndicator,
-#                                             price=trade_details.price, quantity=trade_details.quantity)
-#     db.add(new_trade_details)
-#     db.commit()
-#     db.refresh(new_trade_details)
-#     return new_trade_details
+@app.get("/trade/{assetClass}/{endend}/{maxPrice}/{minPrice}/{start}/{tradetype}")
+def advance_filtering(assetClass: Optional[str], endend: Optional[str], maxPrice: Optional[float], minPrice: Optional[float], start: Optional[str], tradetype: Optional[str], db: Session = Depends(get_db)):
+    return db.query(models.Trade).filter(models.Trade.asset_class == assetClass).filter(models.Trade.trade_date_time >= start).filter(models.Trade.trade_date_time <= endend).filter(models.Trade.price <= maxPrice).filter(models.Trade.price >= minPrice).filter(models.Trade.trader == tradetype).all()
